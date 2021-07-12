@@ -85,7 +85,9 @@ namespace Battleship
         private static void DrawBoard(Coordinates revealed)
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("[==========BATTLESHIP==========]");
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine();
 
 
@@ -106,13 +108,11 @@ namespace Battleship
 
                     if (revealed.Obj != '\0' && (revealed.Row == rows[i] && revealed.Col == j))
                     {
-                        //Console.Write($" {revealed.Obj} ");
                         ProcessStep(revealed);
                         moves.Add(revealed);
                     }
                     else if (move.Obj != '\0')
                     {
-                        //Console.Write($" {move.Obj} ");
                         ProcessStep(move);
                     }
                     else Console.Write(" . ");
