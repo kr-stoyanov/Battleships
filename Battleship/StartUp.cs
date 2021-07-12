@@ -65,7 +65,6 @@ namespace Battleship
                         DrawBoard(revealed);
                         Console.WriteLine();
                         Console.WriteLine("         GAME OVER!");
-                        Thread.Sleep(3000);
                         GameOver();
                         break;
                     }
@@ -137,6 +136,7 @@ namespace Battleship
                               $"         with {score} {points}!");
             Console.WriteLine("     Good luck next time!");
             Console.WriteLine();
+            Thread.Sleep(2000);
         }
 
         private static bool IsValidInput(string[] userInput)
@@ -159,7 +159,6 @@ namespace Battleship
             player.SoundLocation = $".\\{file}";
             player.Play();
         }
-
     }
 
     public struct Coordinates
