@@ -106,13 +106,14 @@ namespace Battleship
 
                     if (revealed.Obj != '\0' && (revealed.Row == rows[i] && revealed.Col == j))
                     {
-                        Console.Write($" {revealed.Obj} ");
+                        //Console.Write($" {revealed.Obj} ");
+                        ProcessStep(revealed);
                         moves.Add(revealed);
                     }
                     else if (move.Obj != '\0')
                     {
-                        Console.Write($" {move.Obj} ");
-
+                        //Console.Write($" {move.Obj} ");
+                        ProcessStep(move);
                     }
                     else Console.Write(" . ");
                 }
@@ -151,6 +152,32 @@ namespace Battleship
         private static Coordinates CheckMove(char row, int col)
         {
             return moves.FirstOrDefault(x => x.Row == row && x.Col == col);
+        }
+
+        private static void ProcessStep(Coordinates step)
+        {
+            switch (step.Obj)
+            {
+                case '>':
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write($" {step.Obj} ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+
+                case '*':
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.Write($" {step.Obj} ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+
+                case '_':
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write($" {step.Obj} ");
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         public static void PlaySound(string file)
