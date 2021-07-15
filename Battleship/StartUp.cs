@@ -13,7 +13,7 @@ namespace Battleship
         static char[][] map;
         static char[] rows;
         static int[] columns;
-        static char[] objects; // [_] blank, [*] mine, [>] ship
+        static char[] objects;
         static List<Coordinates> moves;
         static Coordinates revealed;
         static List<Coordinates> coordinates;
@@ -27,7 +27,7 @@ namespace Battleship
 
             rows = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
             columns = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            objects = new char[] { '_', '*', '>' };
+            objects = new char[] { '_', '*', '>' }; // [_] blank, [*] mine, [>] ship
 
             map = new char[7][];
             moves = new List<Coordinates>();
