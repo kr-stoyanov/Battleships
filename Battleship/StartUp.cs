@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading;
 using System.Media;
 
 namespace Battleship
@@ -37,8 +36,49 @@ namespace Battleship
             bomb = @"assets\mixkit-sea-mine-explosion-1184.wav";
             unsuccessfulAttack = @"assets\mixkit-jump-into-the-water-1180.wav";
 
+            LoadMainMenu();
+        }
+
+        private static void LoadMainMenu()
+        {
+            int key = -1;
+
+            while (key != 0)
+            {
+                Console.WriteLine("[========== Main Menu ==========]");
+                Console.WriteLine();
+                Console.WriteLine("1. Start New Game");
+                Console.WriteLine("0. Exit Game");
+                Console.Write("*. Select: ");
+
+                if (int.TryParse(Console.ReadLine(), out key))
+                {
+                    switch (key)
+                    {
+                        case 1:
+                            Play();
+                            break;
+
+                        case 2:
+                            Environment.Exit(0);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+        }
+
+        private static void Play()
+        {
             score = 0;
             round = 1;
+
+            moves.Clear();
+            revealed.Col = 0;
+            revealed.Row = '\0';
+            revealed.Obj = '\0';
 
             while (true)
             {
@@ -82,6 +122,7 @@ namespace Battleship
                 }
             }
         }
+
         private static void DrawBoard(Coordinates revealed)
         {
             Console.Clear();
@@ -89,8 +130,7 @@ namespace Battleship
             Console.WriteLine("[==========BATTLESHIP==========]");
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine();
-
-
+            
             Random rnd = new();
 
             Console.WriteLine($"  {string.Join("  ", columns)}");
@@ -137,7 +177,6 @@ namespace Battleship
                               $"         with {score} {points}!");
             Console.WriteLine("     Good luck next time!");
             Console.WriteLine();
-            Thread.Sleep(2000);
         }
 
         private static bool IsValidInput(string[] userInput)
