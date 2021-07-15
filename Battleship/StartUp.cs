@@ -49,7 +49,7 @@ namespace Battleship
                 Console.WriteLine();
                 Console.WriteLine("1. Start New Game");
                 Console.WriteLine("0. Exit Game");
-                Console.Write("*. Select: ");
+                Console.Write("> Select: ");
 
                 if (int.TryParse(Console.ReadLine(), out key))
                 {
