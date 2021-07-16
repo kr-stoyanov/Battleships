@@ -152,12 +152,12 @@ namespace Battleship
 
                     if (revealed.Obj != '\0' && (revealed.Row == rows[i] && revealed.Col == j))
                     {
-                        ColorStep(revealed);
+                        ProcessStep(revealed);
                         moves.Add(revealed);
                     }
                     else if (move.Obj != '\0')
                     {
-                        ColorStep(move);
+                        ProcessStep(move);
                     }
                     else Console.Write(" . ");
                 }
@@ -197,7 +197,7 @@ namespace Battleship
             return moves.FirstOrDefault(x => x.Row == row && x.Col == col);
         }
 
-        private static void ColorStep(Coordinates step)
+        private static void ProcessStep(Coordinates step)
         {
             switch (step.Obj)
             {
