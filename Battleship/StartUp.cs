@@ -223,7 +223,7 @@ namespace Battleship
             }
         }
 
-        public static void PlaySound(string file)
+        private static void PlaySound(string file)
         {
             SoundPlayer player = new();
             player.SoundLocation = $".\\{file}";
