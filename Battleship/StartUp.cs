@@ -9,6 +9,7 @@ namespace Battleship
     {
         static int score;
         static int round;
+        static int objIdx;
         static char[][] map;
         static char[] rows;
         static int[] columns;
@@ -76,6 +77,7 @@ namespace Battleship
             round = 1;
 
             moves.Clear();
+            coordinates.Clear();
             revealed.Col = 0;
             revealed.Row = '\0';
             revealed.Obj = '\0';
@@ -142,7 +144,7 @@ namespace Battleship
 
                 for (int j = 1; j < map[i].Length; j++)
                 {
-                    int objIdx = rnd.Next(0, 3);
+                    objIdx = rnd.Next(0, 3);
                     coordinates.Add(new Coordinates(rows[i], j, objects[objIdx]));
                     var move = CheckMove(rows[i], j);
 
