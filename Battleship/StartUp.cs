@@ -73,6 +73,8 @@ namespace Battleship
 
         private static void Play()
         {
+
+            //Clear all objects and reset stats before each new game.
             score = 0;
             round = 1;
 
