@@ -10,8 +10,6 @@ namespace Battleship
         static int score;
         static int round;
         static int objIdx;
-        static char ship;
-        static char mine;
         static char[][] map;
         static char[] rows;
         static int[] columns;
@@ -30,8 +28,6 @@ namespace Battleship
             rows = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
             columns = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
             objects = new char[] { '_', '*', '>' }; // [_] blank, [*] mine, [>] ship
-            ship = '>';
-            mine = '*';
 
             map = new char[7][];
             moves = new List<Coordinates>();
@@ -54,6 +50,7 @@ namespace Battleship
                 Console.WriteLine();
                 Console.WriteLine("1. Start New Game");
                 Console.WriteLine("0. Exit Game");
+                Console.WriteLine();
                 Console.Write("> Select: ");
 
                 if (int.TryParse(Console.ReadLine(), out key))
@@ -61,7 +58,7 @@ namespace Battleship
                     switch (key)
                     {
                         case 1:
-                            Play();
+                            StartGame();
                             break;
 
                         case 2:
@@ -76,7 +73,7 @@ namespace Battleship
 
         }
 
-        private static void Play()
+        private static void StartGame()
         {
             //Clear all objects and reset stats before each new game.
             score = 0;
@@ -107,7 +104,7 @@ namespace Battleship
                 {
                     revealed = RevealAttackedObject(userInput);
 
-                    if (revealed.Obj == mine)
+                    if (revealed.Obj == objects[1])
                     {
                         PlaySound(bomb);
                         DrawBoard(revealed);
@@ -116,7 +113,7 @@ namespace Battleship
                         GameOver();
                         break;
                     }
-                    else if (revealed.Obj == ship)
+                    else if (revealed.Obj == objects[2])
                     {
                         PlaySound(successfulAttack);
                         score++;
