@@ -10,6 +10,8 @@ namespace Battleship
         static int score;
         static int round;
         static int objIdx;
+        static char ship;
+        static char mine;
         static char[][] map;
         static char[] rows;
         static int[] columns;
@@ -28,6 +30,8 @@ namespace Battleship
             rows = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
             columns = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
             objects = new char[] { '_', '*', '>' }; // [_] blank, [*] mine, [>] ship
+            ship = '>';
+            mine = '*';
 
             map = new char[7][];
             moves = new List<Coordinates>();
@@ -63,6 +67,7 @@ namespace Battleship
                         case 2:
                             Environment.Exit(0);
                             break;
+
                         default:
                             break;
                     }
@@ -102,7 +107,7 @@ namespace Battleship
                 {
                     revealed = RevealAttackedObject(userInput);
 
-                    if (revealed.Obj == '*')
+                    if (revealed.Obj == mine)
                     {
                         PlaySound(bomb);
                         DrawBoard(revealed);
@@ -111,7 +116,7 @@ namespace Battleship
                         GameOver();
                         break;
                     }
-                    else if (revealed.Obj == '>')
+                    else if (revealed.Obj == ship)
                     {
                         PlaySound(successfulAttack);
                         score++;
