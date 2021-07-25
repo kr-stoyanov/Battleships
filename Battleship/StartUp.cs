@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Media;
+using System.Text.RegularExpressions;
 
 namespace Battleship
 {
@@ -10,6 +11,7 @@ namespace Battleship
         static int score;
         static int round;
         static int objIdx;
+        static string pattern;
         static char[][] map;
         static char[] rows;
         static int[] columns;
@@ -25,11 +27,12 @@ namespace Battleship
         {
             Console.Title = "BattleShip";
 
-            rows = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
+            rows = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
             columns = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            objects = new char[] { '_', '*', '>' }; // [_] blank, [*] mine, [>] ship
+            objects = new char[] { '_', '*', 'x' }; // [_] blank, [*] mine, [x] ship
+            pattern = @"([a-j]|[A-J])(([1-9]|10)$)";
 
-            map = new char[7][];
+            map = new char[10][];
             moves = new List<Coordinates>();
             coordinates = new List<Coordinates>();
 
@@ -93,12 +96,9 @@ namespace Battleship
                 Console.WriteLine($"Score: {score}");
                 Console.WriteLine($"Round: {round}");
                 Console.WriteLine();
-                Console.Write($"Enter Coordinates to attack(e.g [A, 9]): ");
+                Console.Write($"Enter Coordinates to attack(e.g [A9]): ");
 
-                string[] userInput = Console.ReadLine()
-                .Split(new char[] { ' ', ',', '-', ';' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(x => x.ToUpper())
-                .ToArray();
+                string userInput = Console.ReadLine();
 
                 if (IsValidInput(userInput))
                 {
@@ -166,9 +166,12 @@ namespace Battleship
             }
         }
 
-        private static Coordinates RevealAttackedObject(string[] userInput)
+        private static Coordinates RevealAttackedObject(string userInput)
         {
-            var attackedObject = coordinates.FirstOrDefault(x => x.Row == char.Parse(userInput[0]) && x.Col == int.Parse(userInput[1]));
+            Match match = Regex.Match(userInput, pattern);
+            var row = char.Parse(match.Groups[1].Value.ToUpper());
+            var col = int.Parse(match.Groups[2].Value);
+            var attackedObject = coordinates.FirstOrDefault(x => x.Row == row && x.Col == col);
 
             return attackedObject;
         }
@@ -184,13 +187,11 @@ namespace Battleship
             Console.WriteLine();
         }
 
-        private static bool IsValidInput(string[] userInput)
+        private static bool IsValidInput(string userInput)
         {
-            if (userInput.Length != 2) return false;
+            Match match = Regex.Match(userInput, pattern);
 
-            if (!rows.ToList().Contains(char.Parse(userInput[0])) || !columns.ToList().Contains(int.Parse(userInput[1]))) return false;
-
-            return true;
+            return match.Success;
         }
 
         private static Coordinates CheckMove(char row, int col)
@@ -202,7 +203,7 @@ namespace Battleship
         {
             switch (step.Obj)
             {
-                case '>':
+                case 'x':
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write($" {step.Obj} ");
                     Console.ForegroundColor = ConsoleColor.White;
