@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.Media;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Battleship
+using Battleships.Models;
+
+namespace Battleships
 {
     public class Program
     {
@@ -29,7 +31,7 @@ namespace Battleship
 
             rows = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
             columns = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            objects = new char[] { '_', '*', 'x' }; // [_] blank, [*] mine, [x] ship
+            objects = new char[] { '_', '*', 'x' }; // [_] miss, [*] bomb, [x] ship
             pattern = @"([a-j]|[A-J])(([1-9]|10)$)";
 
             map = new char[10][];
@@ -132,7 +134,7 @@ namespace Battleship
         {
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("[==========BATTLESHIP==========]");
+            Console.WriteLine("[==========BATTLESHIPS==========]");
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine();
             
@@ -231,20 +233,5 @@ namespace Battleship
             player.SoundLocation = $".\\{file}";
             player.Play();
         }
-    }
-
-    public struct Coordinates
-    {
-        public Coordinates(char row, int col, char obj)
-        {
-            Row = row;
-            Col = col;
-            Obj = obj;
-        }
-        public char Row { get; set; }
-
-        public int Col { get; set; }
-
-        public char Obj { get; set; }
     }
 }
