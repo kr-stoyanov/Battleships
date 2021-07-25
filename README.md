@@ -1,4 +1,4 @@
-# Battleship
+# Battleships
 Simple Console Game
 
 
