@@ -21,6 +21,7 @@ namespace Battleships
         static Coordinates revealed;
         static IList<Coordinates> coordinates;
         static IList<int> nums;
+        static IList<int> chars;
         static IShip[] ships;
         static string hitSound;
         static string missSound;
@@ -32,6 +33,7 @@ namespace Battleships
             rows = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
             columns = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
             nums = new List<int>(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+            chars = new List<int>(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
             pattern = @"([a-j]|[A-J])(([1-9]|10)$)";
 
             map = new char[10][];
@@ -209,24 +211,32 @@ namespace Battleships
             foreach (var ship in ships)
             {
                 CheckPossibleBuildDirections(ship);
-                AddCoordinates(ship);
+                BuildShip(ship);
             }
         }
 
         private static void CheckPossibleBuildDirections(IShip ship)
         {
             Random rnd = new();
-            int idx = nums.OrderBy(x => rnd.Next()).First();
-            nums.Remove(idx);
+            int colIdx = nums.OrderBy(x => rnd.Next()).First();
+            int rowIdx = chars.OrderBy(x => rnd.Next()).First();
 
-            if (rows[idx] + ship.Length < 'K') ship.BuildDirections.Add(BuildDirections.Down);
-            if (rows[idx] - ship.Length >= 'A') ship.BuildDirections.Add(BuildDirections.Up);
-            if (columns[idx] + ship.Length < 10) ship.BuildDirections.Add(BuildDirections.Right);
-            if (columns[idx] + ship.Length >= 0) ship.BuildDirections.Add(BuildDirections.Left);
+            nums.Remove(colIdx);
+            chars.Remove(rowIdx);
+
+            //Add starting building position
+            ship.Coordinates.Add(new Coordinates(rows[rowIdx], columns[colIdx], 'x'));
+
+            if (rows[rowIdx] + ship.Length < 'K') ship.BuildDirections.Add(BuildDirections.Down);
+            if (rows[rowIdx] - ship.Length >= 'A') ship.BuildDirections.Add(BuildDirections.Up);
+            if (columns[colIdx] + ship.Length < 10) ship.BuildDirections.Add(BuildDirections.Right);
+            if (columns[colIdx] - ship.Length >= 0) ship.BuildDirections.Add(BuildDirections.Left);
         }
 
-        private static void AddCoordinates(IShip ship)
+        private static void BuildShip(IShip ship)
         {
+
+            //TODO Rework this method.
             char symbol = 'x';
             Random rnd = new();
             int idx = nums.OrderBy(x => rnd.Next()).First();
