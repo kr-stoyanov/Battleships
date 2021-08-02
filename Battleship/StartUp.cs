@@ -5,43 +5,51 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using Battleships.Models;
+using Battleships.Enums;
 
 namespace Battleships
 {
     public class Program
     {
-        static int score;
         static int round;
         static int objIdx;
         static string pattern;
         static char[][] map;
         static char[] rows;
         static int[] columns;
-        static char[] objects;
-        static List<Coordinates> moves;
+        static IList<Coordinates> moves;
         static Coordinates revealed;
-        static List<Coordinates> coordinates;
-        static string successfulAttack;
-        static string bomb;
-        static string unsuccessfulAttack;
+        static IList<Coordinates> coordinates;
+        static IList<int> nums;
+        static IShip[] ships;
+        static string hitSound;
+        static string missSound;
 
         public static void Main()
         {
             Console.Title = "BattleShip";
 
-            rows = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+            rows = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
             columns = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            objects = new char[] { '_', '*', 'x' }; // [_] miss, [*] bomb, [x] ship
+            nums = new List<int>(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
             pattern = @"([a-j]|[A-J])(([1-9]|10)$)";
 
             map = new char[10][];
             moves = new List<Coordinates>();
             coordinates = new List<Coordinates>();
 
-            successfulAttack = @"assets\mixkit-fuel-explosion-1705.wav";
-            bomb = @"assets\mixkit-sea-mine-explosion-1184.wav";
-            unsuccessfulAttack = @"assets\mixkit-jump-into-the-water-1180.wav";
+            hitSound = @"assets\mixkit-fuel-explosion-1705.wav";
+            missSound = @"assets\mixkit-jump-into-the-water-1180.wav";
 
+            ships = new IShip[]
+            {
+                new Battleship(),
+                new Destroyer(),
+                new Destroyer(),
+            };
+
+            InitializeShips(ships);
+            PrintCoordinates(ships);
             LoadMainMenu();
         }
 
@@ -81,48 +89,49 @@ namespace Battleships
         private static void StartGame()
         {
             //Clear all objects and reset stats before each new game.
-            score = 0;
             round = 1;
 
             moves.Clear();
             coordinates.Clear();
             revealed.Col = 0;
             revealed.Row = '\0';
-            revealed.Obj = '\0';
 
             while (true)
             {
                 DrawBoard(revealed);
 
                 Console.WriteLine();
-                Console.WriteLine($"Score: {score}");
                 Console.WriteLine($"Round: {round}");
                 Console.WriteLine();
                 Console.Write($"Enter Coordinates to attack(e.g [A9]): ");
 
                 string userInput = Console.ReadLine();
+                Match match = Regex.Match(userInput, pattern);
 
-                if (IsValidInput(userInput))
+                if (match.Success)
                 {
-                    revealed = RevealAttackedObject(userInput);
+                    var row = char.Parse(match.Groups[1].Value.ToUpper());
+                    var col = int.Parse(match.Groups[2].Value);
 
-                    if (revealed.Obj == objects[1])
+                    revealed = RevealAttackedObject(userInput, row, col);
+
+                    //if (revealed.Obj == objects[1])
+                    //{
+                    //    DrawBoard(revealed);
+                    //    Console.WriteLine();
+                    //    Console.WriteLine("         GAME OVER!");
+                    //    GameOver();
+                    //    break;
+                    //}
+
+                    //var a = ships.FirstOrDefault(x => x.Coordinates.First(x => x.Row == row && x.Col == col));
+                    if (revealed.Row == 'x')
                     {
-                        PlaySound(bomb);
-                        DrawBoard(revealed);
-                        Console.WriteLine();
-                        Console.WriteLine("         GAME OVER!");
-                        GameOver();
-                        break;
-                    }
-                    else if (revealed.Obj == objects[2])
-                    {
-                        PlaySound(successfulAttack);
-                        score++;
+                        PlaySound(hitSound);
                     }
                     else
                     {
-                        PlaySound(unsuccessfulAttack);
+                        PlaySound(missSound);
                     }
 
                     round++;
@@ -137,7 +146,7 @@ namespace Battleships
             Console.WriteLine("[==========BATTLESHIPS==========]");
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine();
-            
+
             Random rnd = new();
 
             Console.WriteLine($"  {string.Join("  ", columns)}");
@@ -150,17 +159,16 @@ namespace Battleships
                 for (int j = 1; j < map[i].Length; j++)
                 {
                     objIdx = rnd.Next(0, 3);
-                    coordinates.Add(new Coordinates(rows[i], j, objects[objIdx]));
+                    coordinates.Add(new Coordinates(rows[i], j, '_'));
                     var move = CheckMove(rows[i], j);
 
                     if (revealed.Obj != '\0' && (revealed.Row == rows[i] && revealed.Col == j))
                     {
-                        ProcessStep(revealed);
                         moves.Add(revealed);
                     }
                     else if (move.Obj != '\0')
                     {
-                        ProcessStep(move);
+                       // ProcessStep(move);
                     }
                     else Console.Write(" . ");
                 }
@@ -168,11 +176,8 @@ namespace Battleships
             }
         }
 
-        private static Coordinates RevealAttackedObject(string userInput)
+        private static Coordinates RevealAttackedObject(string userInput, char row, int col)
         {
-            Match match = Regex.Match(userInput, pattern);
-            var row = char.Parse(match.Groups[1].Value.ToUpper());
-            var col = int.Parse(match.Groups[2].Value);
             var attackedObject = coordinates.FirstOrDefault(x => x.Row == row && x.Col == col);
 
             return attackedObject;
@@ -180,51 +185,16 @@ namespace Battleships
 
         private static void GameOver()
         {
-            string points = score == 1 ? "point" : "points";
-
+           
             Console.WriteLine();
-            Console.WriteLine($"   You have died in round {round}\n" +
-                              $"         with {score} {points}!");
+            Console.WriteLine($"   You have died in round {round}\n");
             Console.WriteLine("     Good luck next time!");
             Console.WriteLine();
-        }
-
-        private static bool IsValidInput(string userInput)
-        {
-            Match match = Regex.Match(userInput, pattern);
-
-            return match.Success;
         }
 
         private static Coordinates CheckMove(char row, int col)
         {
             return moves.FirstOrDefault(x => x.Row == row && x.Col == col);
-        }
-
-        private static void ProcessStep(Coordinates step)
-        {
-            switch (step.Obj)
-            {
-                case 'x':
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write($" {step.Obj} ");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
-
-                case '*':
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.Write($" {step.Obj} ");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
-
-                case '_':
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write($" {step.Obj} ");
-                    break;
-
-                default:
-                    break;
-            }
         }
 
         private static void PlaySound(string file)
@@ -233,5 +203,73 @@ namespace Battleships
             player.SoundLocation = $".\\{file}";
             player.Play();
         }
-    }
+
+        private static void InitializeShips(IShip[] ships)
+        {
+            foreach (var ship in ships)
+            {
+                CheckPossibleBuildDirections(ship);
+                AddCoordinates(ship);
+            }
+        }
+
+        private static void CheckPossibleBuildDirections(IShip ship)
+        {
+            Random rnd = new();
+            int idx = nums.OrderBy(x => rnd.Next()).First();
+            nums.Remove(idx);
+
+            if (rows[idx] + ship.Length < 'K') ship.BuildDirections.Add(BuildDirections.Down);
+            if (rows[idx] - ship.Length >= 'A') ship.BuildDirections.Add(BuildDirections.Up);
+            if (columns[idx] + ship.Length < 10) ship.BuildDirections.Add(BuildDirections.Right);
+            if (columns[idx] + ship.Length >= 0) ship.BuildDirections.Add(BuildDirections.Left);
+        }
+
+        private static void AddCoordinates(IShip ship)
+        {
+            char symbol = 'x';
+            Random rnd = new();
+            int idx = nums.OrderBy(x => rnd.Next()).First();
+            nums.Remove(idx);
+
+            var coords = new Coordinates(rows[idx], columns[idx], symbol);
+            if (rows[idx] + ship.Length < 'K')
+            {
+                for (int i = idx; i < (idx + ship.Length); i++)
+                {
+                    ship.Coordinates.Add(new Coordinates(rows[i], columns[idx], symbol));
+                }
+            }
+            else if (rows[idx] - ship.Length >= 'A')
+            {
+                for (int i = idx; i > (idx - ship.Length); i--)
+                {
+                    ship.Coordinates.Add(new Coordinates(rows[i], columns[idx], symbol));
+                }
+            }
+            else if (columns[idx] + ship.Length < 10)
+            {
+                for (int i = idx; i < (idx + ship.Length); i++)
+                {
+                    ship.Coordinates.Add(new Coordinates(rows[idx], columns[i], symbol));
+                }
+            }
+            else
+            {
+                for (int i = idx; i > (idx - ship.Length); i--)
+                {
+                    ship.Coordinates.Add(new Coordinates(rows[idx], columns[i], symbol));
+                }
+            }
+        }
+
+        private static void PrintCoordinates(IShip[] ships)
+        {
+            foreach (var s in ships)
+            {
+                Console.WriteLine($"{string.Join(' ', s.Coordinates)}");
+            }
+        }
+
+    } 
 }

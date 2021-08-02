@@ -13,5 +13,10 @@
         public int Col { get; set; }
 
         public char Obj { get; set; }
+
+        public override string ToString()
+        {
+            return $"{this.Row}{this.Col}({this.Obj})";
+        }
     }
 }
