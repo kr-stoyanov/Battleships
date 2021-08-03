@@ -248,7 +248,7 @@ namespace Battleships
                     idx = ship.Coordinates[0].Col + 1;
                     for (int i = idx; i < (idx + ship.Length); i++)
                     {
-                        ship.Coordinates.Add(new Coordinates(rows[idx], columns[i], 'x'));
+                        ship.Coordinates.Add(new Coordinates(ship.Coordinates[0].Row, columns[i], 'x'));
                     }
                     break;
 
@@ -256,7 +256,7 @@ namespace Battleships
                     idx = ship.Coordinates[0].Col - 1;
                     for (int i = idx; i > (idx - ship.Length); --i)
                     {
-                        ship.Coordinates.Add(new Coordinates(rows[idx], columns[i], 'x'));
+                        ship.Coordinates.Add(new Coordinates(ship.Coordinates[0].Row, columns[i], 'x'));
                     }
                     break;
 
@@ -264,7 +264,7 @@ namespace Battleships
                     idx = ship.Coordinates[0].Row + 1;
                     for (int i = idx; i < (idx + ship.Length); i++)
                     {
-                        ship.Coordinates.Add(new Coordinates(rows[i], columns[idx], 'x'));
+                        ship.Coordinates.Add(new Coordinates(rows[i], ship.Coordinates[0].Col, 'x'));
                     }
                     break;
 
@@ -272,7 +272,7 @@ namespace Battleships
                     idx = ship.Coordinates[0].Row - 1;
                     for (int i = idx; i > (idx - ship.Length); --i)
                     {
-                        ship.Coordinates.Add(new Coordinates(rows[i], columns[idx], 'x'));
+                        ship.Coordinates.Add(new Coordinates(rows[i], ship.Coordinates[0].Col, 'x'));
                     }
                     break;
 
