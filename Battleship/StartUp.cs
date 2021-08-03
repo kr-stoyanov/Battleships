@@ -227,50 +227,59 @@ namespace Battleships
             //Add starting building position
             ship.Coordinates.Add(new Coordinates(rows[rowIdx], columns[colIdx], 'x'));
 
-            if (rows[rowIdx] + ship.Length < 'K') ship.BuildDirections.Add(BuildDirections.Down);
-            if (rows[rowIdx] - ship.Length >= 'A') ship.BuildDirections.Add(BuildDirections.Up);
-            if (columns[colIdx] + ship.Length < 10) ship.BuildDirections.Add(BuildDirections.Right);
-            if (columns[colIdx] - ship.Length >= 0) ship.BuildDirections.Add(BuildDirections.Left);
+            if (rows[rowIdx] + (ship.Length - 1) < 'K')   ship.BuildDirections.Add(BuildDirections.Down);
+            if (rows[rowIdx] - (ship.Length - 1) >= 'A')  ship.BuildDirections.Add(BuildDirections.Up);
+            if (columns[colIdx] + (ship.Length - 1) < 11) ship.BuildDirections.Add(BuildDirections.Right);
+            if (columns[colIdx] - (ship.Length - 1) >= 0) ship.BuildDirections.Add(BuildDirections.Left);
         }
 
         private static void BuildShip(IShip ship)
         {
+            //TODO Fix Rows issues
 
-            //TODO Rework this method.
-            char symbol = 'x';
             Random rnd = new();
-            int idx = nums.OrderBy(x => rnd.Next()).First();
-            nums.Remove(idx);
 
-            var coords = new Coordinates(rows[idx], columns[idx], symbol);
-            if (rows[idx] + ship.Length < 'K')
+            var buildDirection = ship.BuildDirections.OrderBy(x => rnd.Next()).First();
+            int idx = 0;
+
+            switch (buildDirection.ToString())
             {
-                for (int i = idx; i < (idx + ship.Length); i++)
-                {
-                    ship.Coordinates.Add(new Coordinates(rows[i], columns[idx], symbol));
-                }
+                case "Right": //Build Right 
+                    idx = ship.Coordinates[0].Col + 1;
+                    for (int i = idx; i < (idx + ship.Length); i++)
+                    {
+                        ship.Coordinates.Add(new Coordinates(rows[idx], columns[i], 'x'));
+                    }
+                    break;
+
+                case "Left": //Build Left
+                    idx = ship.Coordinates[0].Col - 1;
+                    for (int i = idx; i > (idx - ship.Length); --i)
+                    {
+                        ship.Coordinates.Add(new Coordinates(rows[idx], columns[i], 'x'));
+                    }
+                    break;
+
+                case "Down": //Build Down 
+                    idx = ship.Coordinates[0].Row + 1;
+                    for (int i = idx; i < (idx + ship.Length); i++)
+                    {
+                        ship.Coordinates.Add(new Coordinates(rows[i], columns[idx], 'x'));
+                    }
+                    break;
+
+                case "Up": //Build Up 
+                    idx = ship.Coordinates[0].Row - 1;
+                    for (int i = idx; i > (idx - ship.Length); --i)
+                    {
+                        ship.Coordinates.Add(new Coordinates(rows[i], columns[idx], 'x'));
+                    }
+                    break;
+
+                default:
+                    break;
             }
-            else if (rows[idx] - ship.Length >= 'A')
-            {
-                for (int i = idx; i > (idx - ship.Length); i--)
-                {
-                    ship.Coordinates.Add(new Coordinates(rows[i], columns[idx], symbol));
-                }
-            }
-            else if (columns[idx] + ship.Length < 10)
-            {
-                for (int i = idx; i < (idx + ship.Length); i++)
-                {
-                    ship.Coordinates.Add(new Coordinates(rows[idx], columns[i], symbol));
-                }
-            }
-            else
-            {
-                for (int i = idx; i > (idx - ship.Length); i--)
-                {
-                    ship.Coordinates.Add(new Coordinates(rows[idx], columns[i], symbol));
-                }
-            }
+
         }
 
         private static void PrintCoordinates(IShip[] ships)
