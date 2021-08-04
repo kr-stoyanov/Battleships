@@ -235,42 +235,40 @@ namespace Battleships
 
         private static void BuildShip(IShip ship)
         {
-            //TODO Fix Rows issues
-
             Random rnd = new();
 
             var buildDirection = ship.BuildDirections.OrderBy(x => rnd.Next()).First();
             int idx = 0;
 
-            switch (buildDirection.ToString())
+            switch (buildDirection)
             {
-                case "Right": //Build Right 
-                    idx = ship.Coordinates[0].Col + 1;
-                    for (int i = idx; i < (idx + ship.Length); i++)
+                case BuildDirections.Right:
+                    idx = ship.Coordinates[0].Col;
+                    for (int i = idx; i < (idx + ship.Length - 1); i++)
                     {
                         ship.Coordinates.Add(new Coordinates(ship.Coordinates[0].Row, columns[i], 'x'));
                     }
                     break;
 
-                case "Left": //Build Left
-                    idx = ship.Coordinates[0].Col - 1;
-                    for (int i = idx; i > (idx - ship.Length); --i)
+                case BuildDirections.Left:
+                    idx = ship.Coordinates[0].Col - 2;
+                    for (int i = idx; i > (idx - (ship.Length - 1)); i--)
                     {
                         ship.Coordinates.Add(new Coordinates(ship.Coordinates[0].Row, columns[i], 'x'));
                     }
                     break;
 
-                case "Down": //Build Down 
-                    idx = ship.Coordinates[0].Row + 1;
-                    for (int i = idx; i < (idx + ship.Length); i++)
+                case BuildDirections.Down:
+                    idx = ship.Coordinates[0].Row - 64;
+                    for (int i = idx; i < (idx + ship.Length - 1); i++)
                     {
                         ship.Coordinates.Add(new Coordinates(rows[i], ship.Coordinates[0].Col, 'x'));
                     }
                     break;
 
-                case "Up": //Build Up 
-                    idx = ship.Coordinates[0].Row - 1;
-                    for (int i = idx; i > (idx - ship.Length); --i)
+                case BuildDirections.Up:
+                    idx = ship.Coordinates[0].Row - 66;
+                    for (int i = idx; i > (idx - ship.Length + 1); i--)
                     {
                         ship.Coordinates.Add(new Coordinates(rows[i], ship.Coordinates[0].Col, 'x'));
                     }
@@ -279,7 +277,6 @@ namespace Battleships
                 default:
                     break;
             }
-
         }
 
         private static void PrintCoordinates(IShip[] ships)
