@@ -12,7 +12,6 @@ namespace Battleships
     public class Program
     {
         static int round;
-        static int objIdx;
         static string pattern;
         static char[][] map;
         static char[] rows;
@@ -117,15 +116,6 @@ namespace Battleships
 
                     revealed = RevealAttackedObject(userInput, row, col);
 
-                    //if (revealed.Obj == objects[1])
-                    //{
-                    //    DrawBoard(revealed);
-                    //    Console.WriteLine();
-                    //    Console.WriteLine("         GAME OVER!");
-                    //    GameOver();
-                    //    break;
-                    //}
-
                     //var a = ships.FirstOrDefault(x => x.Coordinates.First(x => x.Row == row && x.Col == col));
                     if (revealed.Row == 'x')
                     {
@@ -160,7 +150,6 @@ namespace Battleships
 
                 for (int j = 1; j < map[i].Length; j++)
                 {
-                    objIdx = rnd.Next(0, 3);
                     coordinates.Add(new Coordinates(rows[i], j, '_'));
                     var move = CheckMove(rows[i], j);
 
@@ -183,15 +172,6 @@ namespace Battleships
             var attackedObject = coordinates.FirstOrDefault(x => x.Row == row && x.Col == col);
 
             return attackedObject;
-        }
-
-        private static void GameOver()
-        {
-           
-            Console.WriteLine();
-            Console.WriteLine($"   You have died in round {round}\n");
-            Console.WriteLine("     Good luck next time!");
-            Console.WriteLine();
         }
 
         private static Coordinates CheckMove(char row, int col)
@@ -227,10 +207,10 @@ namespace Battleships
             //Add starting building position
             ship.Coordinates.Add(new Coordinates(rows[rowIdx], columns[colIdx], 'x'));
 
-            if (rows[rowIdx] + (ship.Length - 1) < 'K')   ship.BuildDirections.Add(BuildDirections.Down);
-            if (rows[rowIdx] - (ship.Length - 1) >= 'A')  ship.BuildDirections.Add(BuildDirections.Up);
-            if (columns[colIdx] + (ship.Length - 1) < 11) ship.BuildDirections.Add(BuildDirections.Right);
-            if (columns[colIdx] - (ship.Length - 1) >= 0) ship.BuildDirections.Add(BuildDirections.Left);
+            if (rows[rowIdx] + (ship.Length - 1) < 'K') ship.BuildDirections.Add(BuildDirections.Down);
+            if (rows[rowIdx] - (ship.Length - 1) >= 'A') ship.BuildDirections.Add(BuildDirections.Up);
+            if (colIdx + (ship.Length - 1) < 11) ship.BuildDirections.Add(BuildDirections.Right);
+            if (colIdx - (ship.Length - 1) >= 0) ship.BuildDirections.Add(BuildDirections.Left);
         }
 
         private static void BuildShip(IShip ship)
@@ -286,6 +266,5 @@ namespace Battleships
                 Console.WriteLine($"{string.Join(' ', s.Coordinates)}");
             }
         }
-
     } 
 }
