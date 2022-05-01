@@ -276,7 +276,7 @@ namespace Battleships
             Console.WriteLine();
             Console.WriteLine("         GAME OVER!");
             Console.WriteLine();
-            Console.WriteLine($"You completed the game in {round} moves\n");
+            Console.WriteLine($"You completed the game in {round} moves!");
             Console.WriteLine();
         }
 
