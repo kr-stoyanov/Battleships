@@ -20,9 +20,6 @@
     <None Update="assets\mixkit-jump-into-the-water-1180.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="assets\mixkit-sea-mine-explosion-1184.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>
