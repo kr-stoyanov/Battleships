@@ -160,6 +160,7 @@ namespace Battleships
                     {
                         DrawBoard(revealed);
                         GameOver();
+                        LoadMainMenu();
                         break;
                     }
 
@@ -258,16 +259,11 @@ namespace Battleships
             Match match = Regex.Match(userInput, pattern);
             var row = char.Parse(match.Groups[1].Value.ToUpper());
             var col = int.Parse(match.Groups[2].Value);
+
             var attackedShip = battleships.Where(x => x.Coordinates.Any(c => c.Row == row && c.Col == col)).FirstOrDefault();
-            var attackedCoordinates = new Coordinates();
-            if (attackedShip == null)
-            {
-                attackedCoordinates.Row = row;
-                attackedCoordinates.Col = col;
-                return attackedCoordinates;
-            }
-            attackedCoordinates = attackedShip.Coordinates.First(x => x.Row == row && x.Col == col);
-            return attackedCoordinates;
+            
+            if (attackedShip == null) return new Coordinates(row, col, '\0');
+            return attackedShip.Coordinates.First(x => x.Row == row && x.Col == col);
         }
 
         private static void GameOver()
