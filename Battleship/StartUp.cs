@@ -9,7 +9,6 @@ namespace Battleships
     public class Program
     {
         static int round;
-        static int numberOfShips;
         static string pattern;
         static char[][] map;
         static char[] rows;
@@ -22,6 +21,8 @@ namespace Battleships
         static string unsuccessfulAttack;
         static string message;
 
+        const int NumberOfShips = 3;
+
         public static void Main()
         {
             Console.Title = "Battleship";
@@ -33,7 +34,7 @@ namespace Battleships
 
             map = new char[10][];
             moves = new List<Coordinates>();
-            battleships = new List<Battleship>(numberOfShips);
+            battleships = new List<Battleship>(NumberOfShips);
 
             successfulAttack = @"assets\mixkit-fuel-explosion-1705.wav";
             unsuccessfulAttack = @"assets\mixkit-jump-into-the-water-1180.wav";
@@ -47,7 +48,7 @@ namespace Battleships
             var random = new Random();
             int length = 4;
 
-            for (int i = 0; i < numberOfShips; i++)
+            for (int i = 0; i < NumberOfShips; i++)
             {
                 if (i == 2) length++;
                 int randomNumber = random.Next(0, 2);
