@@ -44,23 +44,68 @@ namespace Battleships
         private static void CreateBattleships()
         {
             battleships.Clear();
-
-            for (int i = 0; i < 2; i++)
+            var random = new Random();
+            int length = 4;
+            for (int i = 0; i < 3; i++)
             {
-                LoadCoordinates(4, i);
+                if (i == 2) length++;
+                int randomNumber = random.Next(0, 2);
+                switch (randomNumber)
+                {
+                    case 0: PositionHorizontally(length, i); break;
+                    case 1: PositionVertically(length, i); break;
+                    default:
+                        break;
+                }
             }
-            LoadCoordinates(5, 2);
         }
 
-        private static void LoadCoordinates(int length, int index)
+        private static void PositionVertically(int length, int index)
+        {
+            battleships.Add(new Battleship(length));
+            int start, end = 0;
+            Random rnd = new();
+            int random = rnd.Next(0, columns.Length);
+            int columnPosition = columns[random];
+
+            while (battleships.Any(x => x.Coordinates != null) && battleships.Any(x => x.Coordinates.Any(s => s.Col == columnPosition || s.Row == columnPosition)))
+            {
+                random = rnd.Next(0, columns.Length);
+                columnPosition = columns[random];
+            }
+
+
+            if (random + length > columns.Length && random - length >= 0)
+            {
+                start = random - length;
+                end = random;
+
+                for (int i = start; i < end; i++)
+                {
+                    battleships[index].Coordinates.Add(new Coordinates(rows[i], columnPosition, targetHit));
+                }
+            }
+            else
+            {
+                start = random;
+                end = random + length;
+
+                for (int i = start; i < end; i++)
+                {
+                    battleships[index].Coordinates.Add(new Coordinates(rows[i], columnPosition, targetHit));
+                }
+            }
+        }
+
+        private static void PositionHorizontally(int length, int index)
         {
             battleships.Add(new Battleship(length));
             int start, end = 0;
             Random rnd = new();
             int random = rnd.Next(0, rows.Length);
             char rowPosition = rows[random];
-            //Horizontal
-            while (battleships.Any(x => x.Coordinates != null) && battleships.Any(x => x.Coordinates.Any(s => s.Row == rowPosition)))
+            
+            while (battleships.Any(x => x.Coordinates != null) && battleships.Any(x => x.Coordinates.Any(s => s.Row == rowPosition || s.Col == rowPosition)))
             {
                 random = rnd.Next(0, rows.Length);
                 rowPosition = rows[random];
