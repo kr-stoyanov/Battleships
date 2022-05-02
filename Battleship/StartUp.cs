@@ -23,7 +23,6 @@ namespace Battleships
 
         public static void Main()
         {
-            //TODO: implement vertical positioned battleships
             Console.Title = "Battleship";
 
             targetHit = 'x';
