@@ -179,6 +179,14 @@ namespace Battleships
                 Console.WriteLine(message);
                 Console.Write($"Enter Coordinates to attack(e.g [A9]): ");
 
+                if (battleships.All(x => x.Coordinates.All(x => x.IsHit)))
+                {
+                    DrawBoard(revealed);
+                    GameOver();
+                    LoadMainMenu();
+                    break;
+                }
+
                 string userInput = Console.ReadLine();
                 if (IsValidInput(userInput))
                 {
@@ -202,16 +210,10 @@ namespace Battleships
                         revealed.Obj = '_';
                         message = "***Miss***";
                     }
-                    if (battleships.All(x => x.Coordinates.All(x => x.IsHit)))
-                    {
-                        DrawBoard(revealed);
-                        GameOver();
-                        LoadMainMenu();
-                        break;
-                    }
 
                     round++;
                 }
+
                 if (userInput.ToLower() == "show")
                 {
                     DrawRevealedBoard();
