@@ -25,7 +25,7 @@ namespace Battleships
 
         public static void Main()
         {
-            Console.Title = "Battleship";
+            Console.Title = "Battleships";
 
             targetHit = 'x';
             pattern = @"([a-j]|[A-J])(([1-9]|10)$)";
