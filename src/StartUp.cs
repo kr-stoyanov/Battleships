@@ -225,7 +225,6 @@ namespace Battleships
         private static void DrawRevealedBoard()
         {
             PrintTitle();
-
             Console.WriteLine($"  {string.Join("  ", columns)}");
 
             for (int i = 0; i < map.Length; i++)
@@ -236,16 +235,10 @@ namespace Battleships
                 for (int j = 1; j < map[i].Length; j++)
                 {
                     var move = CheckMoveOnShow(rows[i], j);
-
-                    if (move != null)
-                    {
-                        ProcessStep('x');
-                    }
-                    else
-                    {
-                        ProcessStep('_');
-                    }
+                    if (move != null) ProcessStep('x');
+                    else ProcessStep('_'); 
                 }
+
                 Console.WriteLine();
             }
         }
@@ -253,7 +246,6 @@ namespace Battleships
         private static void DrawBoard(Coordinates revealed)
         {
             PrintTitle();
-
             Console.WriteLine($"  {string.Join("  ", columns)}");
 
             for (int i = 0; i < map.Length; i++)
@@ -269,14 +261,9 @@ namespace Battleships
                     {
                         switch (revealed.Obj)
                         {
-                            case 'x':
-                                ProcessStep(revealed.Obj);
-                                break;
-                            case '_':
-                                ProcessStep('_');
-                                break;
-                            default:
-                                break;
+                            case 'x': ProcessStep(revealed.Obj); break;
+                            case '_': ProcessStep('_'); break;
+                            default: break;
                         }
                     }
                     else if (move != null && move.Row == rows[i] && move.Col == j)
@@ -354,8 +341,7 @@ namespace Battleships
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
 
-                default:
-                    break;
+                default: break;
             }
         }
 
