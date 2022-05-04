@@ -136,12 +136,12 @@ namespace Battleships
 
             int key = -1;
 
-            while (key != 0)
+            while (key != 9)
             {
                 Console.WriteLine("[========== Main Menu ==========]");
                 Console.WriteLine();
                 Console.WriteLine("1. Start New Game");
-                Console.WriteLine("0. Exit Game");
+                Console.WriteLine("9. Exit Game");
                 Console.WriteLine();
                 Console.Write("> Select: ");
 
@@ -149,9 +149,12 @@ namespace Battleships
                 {
                     switch (key)
                     {
-                        case 1: StartGame(); break;
-                        case 0: Environment.Exit(0); break;
-                        default: break;
+                        case 1:  StartGame(); break;
+                        case 9:  Environment.Exit(0); break;
+                        default: 
+                                 Console.Clear();
+                                 Console.WriteLine($"Command: [{key}] not supported!"); 
+                        break;
                     }
                 }
             }
