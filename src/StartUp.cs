@@ -17,8 +17,8 @@ namespace Battleships
         static List<Battleship> battleships;
         static List<Coordinates> moves;
         static Coordinates revealed;
-        static string successfulAttack;
-        static string unsuccessfulAttack;
+        static string successfulAttackSound;
+        static string unsuccessfulAttackSound;
         static string message;
 
         const int NumberOfShips = 3;
@@ -36,8 +36,8 @@ namespace Battleships
             moves = new List<Coordinates>();
             battleships = new List<Battleship>(NumberOfShips);
 
-            successfulAttack = @"assets\mixkit-fuel-explosion-1705.wav";
-            unsuccessfulAttack = @"assets\mixkit-jump-into-the-water-1180.wav";
+            successfulAttackSound = @"assets\mixkit-fuel-explosion-1705.wav";
+            unsuccessfulAttackSound = @"assets\mixkit-jump-into-the-water-1180.wav";
 
             LoadMainMenu();
         }
@@ -51,13 +51,9 @@ namespace Battleships
             for (int i = 0; i < NumberOfShips; i++)
             {
                 if (i == 2) length++;
-                int randomNumber = random.Next(0, 2);
-                switch (randomNumber)
-                {
-                    case 0: PositionHorizontally(length, i); break;
-                    case 1: PositionVertically(length, i); break;
-                    default: break;
-                }
+                int randomNumber = random.Next(1, 100);
+                if (randomNumber % 2 == 0)  PositionHorizontally(length, i);
+                else                        PositionVertically(length, i);
             }
         }
 
@@ -194,7 +190,7 @@ namespace Battleships
 
                     if (revealed.Obj == targetHit)
                     {
-                        PlaySound(successfulAttack);
+                        PlaySound(successfulAttackSound);
                         var thisShip = battleships
                                             .FirstOrDefault(x => x.Coordinates.Any(c => c.Row == revealed.Row && c.Col == revealed.Col));
 
@@ -206,7 +202,7 @@ namespace Battleships
                     }
                     else
                     {
-                        PlaySound(unsuccessfulAttack);
+                        PlaySound(unsuccessfulAttackSound);
                         revealed.Obj = '_';
                         message = "***Miss***";
                     }
