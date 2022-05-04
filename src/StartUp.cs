@@ -150,7 +150,7 @@ namespace Battleships
                     switch (key)
                     {
                         case 1: StartGame(); break;
-                        case 2: Environment.Exit(0); break;
+                        case 0: Environment.Exit(0); break;
                         default: break;
                     }
                 }
