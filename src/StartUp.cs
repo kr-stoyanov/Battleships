@@ -11,7 +11,7 @@ namespace Battleships
         static int round;
         static string pattern;
         static char[][] map;
-        static char[] rows;
+        static int[] rows;
         static int[] columns;
         static char targetHit;
         static List<Battleship> battleships;
@@ -30,7 +30,7 @@ namespace Battleships
             targetHit = 'x';
             pattern = @"([a-j]|[A-J])(([1-9]|10)$)";
             columns = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            rows = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+            rows = new int[] { 65, 66, 67, 68, 69, 70, 71, 72, 73, 74 }; // A..J 
 
             map = new char[10][];
             moves = new List<Coordinates>();
@@ -50,72 +50,42 @@ namespace Battleships
 
             for (int i = 0; i < NumberOfShips; i++)
             {
-                if (i == 2) length++;
+                if (i == NumberOfShips - 1) length++;
                 int randomNumber = random.Next(1, 100);
-                if (randomNumber % 2 == 0)  PositionHorizontally(length, i);
-                else                        PositionVertically(length, i);
+                if (randomNumber % 2 == 0) PositionBattleShip(length, i, true);
+                else                       PositionBattleShip(length, i, false);
             }
         }
 
-        private static void PositionVertically(int length, int index)
+        private static void PositionBattleShip(int length, int index, bool isHorizontal)
         {
             battleships.Add(new Battleship(length));
-            int start, end = 0;
-            Random rnd = new();
-            int random = rnd.Next(0, columns.Length);
-            int columnPosition = columns[random];
-
-            while (battleships.Any(x => x.Coordinates != null) && battleships.Any(x => x.Coordinates.Any(s => s.Col == columnPosition || s.Row == columnPosition)))
-            {
-                random = rnd.Next(0, columns.Length);
-                columnPosition = columns[random];
-            }
-
-
-            if (random + length > columns.Length && random - length >= 0)
-            {
-                start = random - length;
-                end = random;
-
-                for (int i = start; i < end; i++)
-                {
-                    battleships[index].Coordinates.Add(new Coordinates(rows[i], columnPosition, targetHit));
-                }
-            }
-            else
-            {
-                start = random;
-                end = random + length;
-
-                for (int i = start; i < end; i++)
-                {
-                    battleships[index].Coordinates.Add(new Coordinates(rows[i], columnPosition, targetHit));
-                }
-            }
-        }
-
-        private static void PositionHorizontally(int length, int index)
-        {
-            battleships.Add(new Battleship(length));
-            int start, end = 0;
+            int start, end, position = 0;
             Random rnd = new();
             int random = rnd.Next(0, rows.Length);
-            char rowPosition = rows[random];
-            
-            while (battleships.Any(x => x.Coordinates != null) && battleships.Any(x => x.Coordinates.Any(s => s.Row == rowPosition || s.Col == rowPosition)))
+            int[] positionlaArray = Array.Empty<int>();
+
+            if (isHorizontal) positionlaArray = rows;
+            else positionlaArray = columns;
+                
+            position = positionlaArray[random];
+
+            while (battleships.Any(x => x.Coordinates != null) && 
+                   battleships.Any(x => x.Coordinates.Any(s => s.Row == position || s.Col == position)))
             {
-                random = rnd.Next(0, rows.Length);
-                rowPosition = rows[random];
+                random = rnd.Next(0, positionlaArray.Length);
+                position = positionlaArray[random];
             }
 
-            if (random + length > rows.Length && random - length >= 0)
+            if (random + length > positionlaArray.Length && random - length >= 0)
             {
                 start = random - length;
                 end = random;
 
                 for (int i = start; i < end; i++)
                 {
-                    battleships[index].Coordinates.Add(new Coordinates(rowPosition, columns[i], targetHit));
+                    if (isHorizontal) battleships[index].Coordinates.Add(new Coordinates(position, columns[i], targetHit));
+                    else              battleships[index].Coordinates.Add(new Coordinates(rows[i], position, targetHit));
                 }
             }
             else
@@ -125,7 +95,8 @@ namespace Battleships
 
                 for (int i = start; i < end; i++)
                 {
-                    battleships[index].Coordinates.Add(new Coordinates(rowPosition, columns[i], targetHit));
+                    if (isHorizontal) battleships[index].Coordinates.Add(new Coordinates(position, columns[i], targetHit));
+                    else              battleships[index].Coordinates.Add(new Coordinates(rows[i], position, targetHit));
                 }
             }
         }
@@ -153,7 +124,7 @@ namespace Battleships
                         case 9:  Environment.Exit(0); break;
                         default: 
                                  Console.Clear();
-                                 Console.WriteLine($"Command: [{key}] not supported!"); 
+                                 Console.WriteLine($"Command: [{key}] not supported! Try 1 or 9 :)"); 
                         break;
                     }
                 }
@@ -230,7 +201,7 @@ namespace Battleships
             for (int i = 0; i < map.Length; i++)
             {
                 map[i] = new char[11];
-                Console.Write($"{rows[i]  }");
+                Console.Write($"{(char)rows[i]  }");
 
                 for (int j = 1; j < map[i].Length; j++)
                 {
@@ -251,7 +222,7 @@ namespace Battleships
             for (int i = 0; i < map.Length; i++)
             {
                 map[i] = new char[11];
-                Console.Write($"{rows[i]  }");
+                Console.Write($"{(char)rows[i]  }");
 
                 for (int j = 1; j < map[i].Length; j++)
                 {
@@ -316,9 +287,9 @@ namespace Battleships
             return match.Success;
         }
 
-        private static Coordinates CheckMove(char row, int col) =>  moves.FirstOrDefault(x => x.Row == row && x.Col == col);
+        private static Coordinates CheckMove(int row, int col) =>  moves.FirstOrDefault(x => x.Row == row && x.Col == col);
          
-        private static Coordinates CheckMoveOnShow(char row, int col)
+        private static Coordinates CheckMoveOnShow(int row, int col)
         {
             var result = battleships
                            .FirstOrDefault(x => x.Coordinates.Any(c => c.Row == row && c.Col == col));
@@ -357,7 +328,7 @@ namespace Battleships
     {
         public Coordinates()
         { }
-        public Coordinates(char row, int col, char obj, bool isHit = false)
+        public Coordinates(int row, int col, char obj, bool isHit = false)
         {
             Row = row;
             Col = col;
@@ -365,7 +336,7 @@ namespace Battleships
             IsHit = isHit;
         }
 
-        public char Row { get; set; }
+        public int Row { get; set; }
 
         public int Col { get; set; }
 
